@@ -12,6 +12,10 @@ import { Image, ModalImage } from './types';
 
 import css from './App.module.css';
 
+interface FetchDataImage {
+  data: { results: Image[]; total_pages: number };
+}
+
 function App() {
   const [images, setImages] = useState<Image[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
@@ -85,9 +89,12 @@ function App() {
           orientation: 'landscape',
         },
       };
-      const { data } = await axios.get('/search/photos', option);
-      setImages(data.results);
-      setTotalPages(data.total_pages);
+      const response: FetchDataImage = await axios.get(
+        '/search/photos',
+        option
+      );
+      setImages(response.data.results);
+      setTotalPages(response.data.total_pages);
     } catch (error: any) {
       setErrorMessage(error.message);
     } finally {
@@ -109,8 +116,11 @@ function App() {
           orientation: 'landscape',
         },
       };
-      const { data } = await axios.get('/search/photos', option);
-      setImages([...images, ...data.results]);
+      const response: FetchDataImage = await axios.get(
+        '/search/photos',
+        option
+      );
+      setImages([...images, ...response.data.results]);
       setPages(pages + 1);
     } catch (error: any) {
       setErrorMessage(error.message);
